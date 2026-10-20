@@ -1,10 +1,10 @@
 package com.example.muniseg.login
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
@@ -16,9 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.muniseg.ui.theme.MuniSegTheme
+import com.example.muniseg.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -37,6 +38,10 @@ fun LoginScreen() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Image(
+                painter = painterResource(id = R.drawable.muniseg),
+                contentDescription = "Logotipo de la municipalidad"
+            )
             OutlinedTextField(
                 value = usuario,
                 onValueChange = { usuario = it },
@@ -47,13 +52,11 @@ fun LoginScreen() {
                 onValueChange = { contrasena = it },
                 label = { Text("Contraseña") }
             )
-            Button(onClick = {
-                cargando=true
-                CoroutineScope(Dispatchers.Main).launch {
-                    delay(2000)
-                    cargando=false
-                }}) {
-                Text(text = "Enviar")
+            Button(onClick = {},
+                    modifier = Modifier.padding(horizontal = 64.dp)
+            ) {
+                Text(text = "Entrar",
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
             }
 
 

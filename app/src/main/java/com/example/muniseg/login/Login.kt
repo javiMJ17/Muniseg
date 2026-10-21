@@ -3,6 +3,8 @@ package com.example.muniseg.login
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,8 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -35,18 +40,25 @@ fun LoginScreen() {
         var cargando by remember { mutableStateOf(false) }
 
         Column(
+
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp),
+                .padding(50.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(text = "Bienvenido ",
+                 style = androidx.compose.material3.MaterialTheme.typography.headlineSmall,
+                         fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
             Image(
                 painter = painterResource(id = R.drawable.muniseg),
-                contentDescription = "Logotipo de la municipalidad",
+                contentDescription = "Logo de la app",
                 modifier = Modifier.size(300.dp)
             )
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             OutlinedTextField(
                 value = usuario,
@@ -55,7 +67,7 @@ fun LoginScreen() {
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             OutlinedTextField(
                 value = contrasena,
@@ -76,6 +88,40 @@ fun LoginScreen() {
                     text = "Ingresar",
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            TextButton(
+                onClick = { /* Acción para ir al registro */ },
+                contentPadding = PaddingValues(0.dp)
+            ) {
+                Text(
+                    text = "¿Olvido Contraseña?",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Spacer(modifier = Modifier.height(48.dp))
+
+            Row(
+                modifier = Modifier.padding(bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "¿No tienes cuenta? ",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                TextButton(
+                    onClick = { /* Acción para ir al registro */ },
+                    contentPadding = PaddingValues(0.dp)
+                ) {
+                    Text(
+                        text = "Crea una",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }

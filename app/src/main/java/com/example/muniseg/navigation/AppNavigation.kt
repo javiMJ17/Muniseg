@@ -6,10 +6,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.muniseg.home.HomeScreen
 import com.example.muniseg.login.LoginScreen
+import com.example.muniseg.report.ReportCase
 
 sealed class Pantalla(val ruta: String) {
     object Login : Pantalla("login_screen")
     object Home : Pantalla("home_screen")
+    object NuevoCaso: Pantalla(("Nuevo_caso_screen"))
 }
 
 @Composable
@@ -31,7 +33,16 @@ fun AppNavigation() {
             )
         }
         composable(Pantalla.Home.ruta) {
-            HomeScreen()
+            HomeScreen(
+                onReportClick = {navController.navigate(Pantalla.NuevoCaso.ruta)}
+            )
+        }
+        composable(Pantalla.NuevoCaso.ruta){
+            ReportCase(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

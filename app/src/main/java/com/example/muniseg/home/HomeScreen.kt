@@ -21,7 +21,9 @@ import com.google.maps.android.compose.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    onReportClick:() -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -112,7 +114,7 @@ fun HomeScreen() {
 
             // BOTÓN FLOTANTE Reportar
             Button(
-                onClick = { /* Acción para reportar */ },
+                onClick = onReportClick,
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
                     .fillMaxWidth()

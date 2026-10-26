@@ -39,9 +39,8 @@ fun AppNavigation() {
         }
         composable(Pantalla.NuevoCaso.ruta){
             ReportCase(
-                onBackClick = {
-                    navController.popBackStack()
-                }
+                onBackClick = {navController.popBackStack()},
+                onSubmitClick = {/* Boton confirmar */}
             )
         }
     }

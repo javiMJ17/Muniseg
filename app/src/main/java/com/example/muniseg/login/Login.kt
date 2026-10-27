@@ -33,9 +33,14 @@ import androidx.compose.ui.unit.dp
 import com.example.muniseg.R
 
 @Composable
+
+
 fun LoginScreen(
-    onLoginSuccess: () -> Unit // <--- 1. Recibimos la acción de navegación por parámetro
+    onLoginSuccess: () -> Unit,  // <--- 1. Recibimos la acción de navegación por parámetro
+    onRegisterClick: () -> Unit
 ) {
+
+
     var usuario by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
     var cargando by remember { mutableStateOf(false) }
@@ -94,7 +99,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         TextButton(
-            onClick = { /* Acción para ir a recuperación */ },
+            onClick = { onRegisterClick() },
             contentPadding = PaddingValues(0.dp)
         ) {
             Text(
@@ -114,8 +119,9 @@ fun LoginScreen(
                 text = "¿No tienes cuenta? ",
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+
             TextButton(
-                onClick = { /* Acción para ir al registro */ },
+                onClick = { onRegisterClick() },
                 contentPadding = PaddingValues(0.dp)
             ) {
                 Text(
@@ -124,6 +130,7 @@ fun LoginScreen(
                     fontWeight = FontWeight.Bold
                 )
             }
+
+        }
         }
     }
-}

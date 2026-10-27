@@ -10,6 +10,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import android.util.Patterns
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.graphics.Color
+
 
 @Composable
 
@@ -132,10 +134,16 @@ fun RegisterScreen(
                 }
 
             },
-            modifier = Modifier.fillMaxWidth()
+
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFAFC0F4),
+                contentColor = Color(0xFF172E55)
+            )
         ) {
             Text("Crear cuenta")
         }
+
 
         Spacer(modifier = Modifier.height(16.dp))
 

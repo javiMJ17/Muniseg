@@ -96,18 +96,21 @@ fun LoginScreen(
                 modifier = Modifier.padding(vertical = 4.dp)
             )
         }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         TextButton(
-            onClick = { onRegisterClick() },
+            onClick = { },
+            enabled = false,
             contentPadding = PaddingValues(0.dp)
         ) {
             Text(
-                text = "¿Olvido Contraseña?",
+                text = "¿Olvidó Contraseña?",
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
             )
         }
+
         Spacer(modifier = Modifier.height(48.dp))
 
         Row(

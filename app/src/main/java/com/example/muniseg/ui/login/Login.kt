@@ -1,4 +1,4 @@
-package com.example.muniseg.login
+package com.example.muniseg.ui.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -39,9 +39,16 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
+
+
+
 fun LoginScreen(
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: () -> Unit,
+    onRegisterClick: () -> Unit
 ) {
+
+
+
     var usuario by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
     var cargando by remember { mutableStateOf(false) }
@@ -126,18 +133,21 @@ fun LoginScreen(
                 )
             }
         }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         TextButton(
-            onClick = { /* Acción para ir a recuperación */ },
+            onClick = { },
+            enabled = false,
             contentPadding = PaddingValues(0.dp)
         ) {
             Text(
-                text = "¿Olvido Contraseña?",
+                text = "¿Olvidó Contraseña?",
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
             )
         }
+
         Spacer(modifier = Modifier.height(48.dp))
 
         Row(
@@ -149,8 +159,9 @@ fun LoginScreen(
                 text = "¿No tienes cuenta? ",
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+
             TextButton(
-                onClick = { /* Acción para ir al registro */ },
+                onClick = { onRegisterClick() },
                 contentPadding = PaddingValues(0.dp)
             ) {
                 Text(
@@ -159,6 +170,7 @@ fun LoginScreen(
                     fontWeight = FontWeight.Bold
                 )
             }
+
+        }
         }
     }
-}

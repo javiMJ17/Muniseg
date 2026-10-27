@@ -1,20 +1,31 @@
-package com.example.muniseg.navigation
+package com.example.muniseg.ui.navigation
+
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.muniseg.home.HomeScreen
-import com.example.muniseg.login.LoginScreen
 import com.example.muniseg.report.ReportCase
+import com.example.muniseg.ui.login.RegisterScreen
 import com.example.muniseg.ui.perfil.PerfilScreen
+import com.example.muniseg.ui.login.LoginScreen
+
+
 
 sealed class Pantalla(val ruta: String) {
+
     object Login : Pantalla("login_screen")
+
     object Home : Pantalla("home_screen")
+
     object NuevoCaso : Pantalla("Nuevo_caso_screen")
+
+    object Registro : Pantalla("register_screen")
+
     object Perfil : Pantalla("perfil_screen")
 }
+
 
 @Composable
 fun AppNavigation() {
@@ -24,15 +35,34 @@ fun AppNavigation() {
         navController = navController,
         startDestination = Pantalla.Login.ruta
     ) {
+
         composable(Pantalla.Login.ruta) {
             LoginScreen(
                 onLoginSuccess = {
                     navController.navigate(Pantalla.Home.ruta) {
-                        popUpTo(Pantalla.Login.ruta) { inclusive = true }
+                        popUpTo(Pantalla.Login.ruta) {
+                            inclusive = true
+                        }
                     }
+                },
+                onRegisterClick = {
+                    navController.navigate(Pantalla.Registro.ruta)
                 }
             )
         }
+
+
+        composable(Pantalla.Registro.ruta) {
+            RegisterScreen(
+                onVolverClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+
+
+
         composable(Pantalla.Home.ruta) {
             HomeScreen(
                 onReportClick = { navController.navigate(Pantalla.NuevoCaso.ruta) },

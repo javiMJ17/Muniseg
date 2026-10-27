@@ -1,4 +1,5 @@
-package com.example.muniseg.login
+package com.example.muniseg.ui.login
+
 
 data class UsuarioDemo(
     val nombre: String,

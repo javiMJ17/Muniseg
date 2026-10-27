@@ -1,4 +1,5 @@
-package com.example.muniseg.login
+package com.example.muniseg.ui.login
+
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

@@ -22,7 +22,8 @@ import com.google.maps.android.compose.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onReportClick:() -> Unit
+    onReportClick:() -> Unit,
+    onProfileClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -35,7 +36,7 @@ fun HomeScreen(
                     )
                 },
                 actions = {
-                    IconButton(onClick = { /* Acción para abrir el perfil */ }) {
+                    IconButton(onClick = onProfileClick) {
                         Icon(
                             imageVector = Icons.Default.Person,
                             contentDescription = "Perfil",

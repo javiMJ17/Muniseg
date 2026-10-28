@@ -112,7 +112,8 @@ fun PerfilScreen(
                     .height(50.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.ExitToApp,
+
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = null
                 )
                 Spacer(modifier = Modifier.width(8.dp))

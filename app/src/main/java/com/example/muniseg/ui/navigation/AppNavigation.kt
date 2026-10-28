@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.muniseg.home.HomeScreen
 import com.example.muniseg.report.ReportCase
+import com.example.muniseg.ui.home.MenuScreen
 import com.example.muniseg.ui.login.RegisterScreen
 import com.example.muniseg.ui.perfil.PerfilScreen
 import com.example.muniseg.ui.login.LoginScreen
@@ -26,6 +27,8 @@ sealed class Pantalla(val ruta: String) {
     object Perfil : Pantalla("perfil_screen")
 
     object Confirmacion : Pantalla("confirmacion_screen")
+
+    object Menu : Pantalla("menu_screen")
 }
 
 
@@ -68,7 +71,24 @@ fun AppNavigation() {
         composable(Pantalla.Home.ruta) {
             HomeScreen(
                 onReportClick = { navController.navigate(Pantalla.NuevoCaso.ruta) },
-                onProfileClick = { navController.navigate(Pantalla.Perfil.ruta) }
+                onMenuClick = { navController.navigate(Pantalla.Menu.ruta) }
+            )
+        }
+        composable(Pantalla.Menu.ruta) {
+            MenuScreen(
+                onProfileClick = { navController.navigate(Pantalla.Perfil.ruta) },
+                onCasesClick = { /* ... */ },
+                onLogoutClick = {
+                    navController.navigate(Pantalla.Login.ruta) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                onReportClick = {
+                    navController.navigate(Pantalla.Home.ruta) {
+                        popUpTo(Pantalla.Home.ruta) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
             )
         }
         composable(Pantalla.NuevoCaso.ruta) {

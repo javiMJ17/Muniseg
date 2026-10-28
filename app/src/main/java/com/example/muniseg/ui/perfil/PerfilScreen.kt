@@ -3,7 +3,6 @@ package com.example.muniseg.ui.perfil
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -19,7 +18,6 @@ import com.example.muniseg.repository.MunisegRepository
 @Composable
 fun PerfilScreen(
     onBackClick: () -> Unit,
-    onLogoutClick: () -> Unit
 ) {
     val rolActual = MunisegRepository.rolActual.value
     val usuarioActual = MunisegRepository.usuarioActual.value
@@ -95,26 +93,6 @@ fun PerfilScreen(
                         fontSize = 14.sp
                     )
                 }
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Botón de Cerrar Sesión
-            Button(
-                onClick = onLogoutClick,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ExitToApp,
-                    contentDescription = null
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Cerrar Sesión", fontWeight = FontWeight.Bold)
             }
         }
     }

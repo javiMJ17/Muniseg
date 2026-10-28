@@ -10,7 +10,7 @@ import com.example.muniseg.report.ReportCase
 import com.example.muniseg.ui.login.RegisterScreen
 import com.example.muniseg.ui.perfil.PerfilScreen
 import com.example.muniseg.ui.login.LoginScreen
-
+import com.example.muniseg.ui.perfil.EditarPerfilScreen
 
 
 sealed class Pantalla(val ruta: String) {
@@ -24,6 +24,8 @@ sealed class Pantalla(val ruta: String) {
     object Registro : Pantalla("register_screen")
 
     object Perfil : Pantalla("perfil_screen")
+
+    object EditarPerfil : Pantalla("editar_perfil_screen")
 }
 
 
@@ -75,13 +77,30 @@ fun AppNavigation() {
                 onSubmitClick = { /* Boton confirmar */ }
             )
         }
+
         composable(Pantalla.Perfil.ruta) {
             PerfilScreen(
-                onBackClick = { navController.popBackStack() },
+                onBackClick = {
+                    navController.popBackStack()
+                },
                 onLogoutClick = {
                     navController.navigate(Pantalla.Login.ruta) {
-                        popUpTo(0) { inclusive = true }
+                        popUpTo(0) {
+                            inclusive = true
+                        }
                     }
+                },
+                onEditClick = {
+                    navController.navigate(Pantalla.EditarPerfil.ruta)
+                }
+            )
+        }
+
+
+        composable(Pantalla.EditarPerfil.ruta) {
+            EditarPerfilScreen(
+                onVolverClick = {
+                    navController.popBackStack()
                 }
             )
         }

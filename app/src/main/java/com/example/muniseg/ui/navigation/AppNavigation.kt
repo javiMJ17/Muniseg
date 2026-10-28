@@ -10,7 +10,7 @@ import com.example.muniseg.report.ReportCase
 import com.example.muniseg.ui.login.RegisterScreen
 import com.example.muniseg.ui.perfil.PerfilScreen
 import com.example.muniseg.ui.login.LoginScreen
-
+import com.example.muniseg.ui.report.ConfirmationScreen
 
 
 sealed class Pantalla(val ruta: String) {
@@ -24,6 +24,8 @@ sealed class Pantalla(val ruta: String) {
     object Registro : Pantalla("register_screen")
 
     object Perfil : Pantalla("perfil_screen")
+
+    object Confirmacion : Pantalla("confirmacion_screen")
 }
 
 
@@ -72,7 +74,17 @@ fun AppNavigation() {
         composable(Pantalla.NuevoCaso.ruta) {
             ReportCase(
                 onBackClick = { navController.popBackStack() },
-                onSubmitClick = { /* Boton confirmar */ }
+                onSubmitClick = {navController.navigate(Pantalla.Confirmacion.ruta)}
+            )
+        }
+        composable (Pantalla.Confirmacion.ruta){
+            ConfirmationScreen(
+                onNavigateHome = {
+                    navController.navigate(Pantalla.Home.ruta){
+                        popUpTo(0){inclusive = true}
+                    }
+                },
+                onNavigateMisCasos ={/*Pantalla mis casos */}
             )
         }
         composable(Pantalla.Perfil.ruta) {

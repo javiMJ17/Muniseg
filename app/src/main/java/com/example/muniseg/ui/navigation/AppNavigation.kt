@@ -11,6 +11,7 @@ import com.example.muniseg.ui.home.MenuScreen
 import com.example.muniseg.ui.login.RegisterScreen
 import com.example.muniseg.ui.perfil.PerfilScreen
 import com.example.muniseg.ui.login.LoginScreen
+import com.example.muniseg.ui.perfil.EditarPerfilScreen
 import com.example.muniseg.ui.report.ConfirmationScreen
 
 
@@ -26,6 +27,7 @@ sealed class Pantalla(val ruta: String) {
 
     object Perfil : Pantalla("perfil_screen")
 
+    object EditarPerfil : Pantalla("editar_perfil_screen")
     object Confirmacion : Pantalla("confirmacion_screen")
 
     object Menu : Pantalla("menu_screen")
@@ -107,13 +109,30 @@ fun AppNavigation() {
                 onNavigateMisCasos ={/*Pantalla mis casos */}
             )
         }
+
         composable(Pantalla.Perfil.ruta) {
             PerfilScreen(
-                onBackClick = { navController.popBackStack() },
+                onBackClick = {
+                    navController.popBackStack()
+                },
                 onLogoutClick = {
                     navController.navigate(Pantalla.Login.ruta) {
-                        popUpTo(0) { inclusive = true }
+                        popUpTo(0) {
+                            inclusive = true
+                        }
                     }
+                },
+                onEditClick = {
+                    navController.navigate(Pantalla.EditarPerfil.ruta)
+                }
+            )
+        }
+
+
+        composable(Pantalla.EditarPerfil.ruta) {
+            EditarPerfilScreen(
+                onVolverClick = {
+                    navController.popBackStack()
                 }
             )
         }

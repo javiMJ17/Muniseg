@@ -16,9 +16,13 @@ import com.example.muniseg.repository.MunisegRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+
 fun PerfilScreen(
     onBackClick: () -> Unit,
+    onLogoutClick: () -> Unit,
+    onEditClick: () -> Unit
 ) {
+
     val rolActual = MunisegRepository.rolActual.value
     val usuarioActual = MunisegRepository.usuarioActual.value
 
@@ -94,6 +98,46 @@ fun PerfilScreen(
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Botón de Cerrar Sesión
+            Button(
+                onClick = onLogoutClick,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            ) {
+                Icon(
+
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Cerrar Sesión", fontWeight = FontWeight.Bold)
+            }
+
+            Button(
+                onClick = onEditClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFAFC0F4),
+                    contentColor = Color(0xFF172E55)
+                )
+            ) {
+                Text(
+                    text = "Editar perfil",
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
         }
     }
 }

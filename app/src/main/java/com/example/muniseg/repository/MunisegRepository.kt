@@ -12,6 +12,10 @@ object MunisegRepository {
     var rolActual = mutableStateOf(RolUsuario.VECINO)
     var usuarioActual = mutableStateOf("vecino_demo")
 
+    var correoActual = mutableStateOf("vecino@ejemplo.com")
+
+
+
     val sectoresDisponibles = listOf(
         SectorReferencial("Cuadrante Norte - Sector Referencial 1", LatLng(-33.4976726, -70.6126025)),
         SectorReferencial("Cuadrante Sur - Plaza Referencial 2", LatLng(-33.5010460, -70.6170712)),

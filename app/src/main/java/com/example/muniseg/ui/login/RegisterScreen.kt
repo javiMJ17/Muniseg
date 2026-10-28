@@ -26,167 +26,162 @@ fun RegisterScreen(
     var mostrarConfirmacion by remember { mutableStateOf(false) }
 
 
+
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(24.dp)
-
-
     ) {
 
-        Text(
-            text = "Crear cuenta",
-            style = MaterialTheme.typography.headlineMedium
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        OutlinedTextField(
-            value = nombre,
-            onValueChange = { nombre = it },
-            label = { Text("Nombre completo") },
+        // Encabezado celeste
+        Surface(
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = correo,
-            onValueChange = { correo = it },
-            label = { Text("Correo electrónico") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
-
-
-
-
-
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = contrasena,
-            onValueChange = { contrasena = it },
-            label = { Text("Contraseña") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = confirmarContrasena,
-            onValueChange = { confirmarContrasena = it },
-            label = { Text("Confirmar contraseña") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
-        )
-
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-
-        Button(
-            onClick = {
-                mensaje = when {
-
-                    nombre.isBlank() ||
-                            correo.isBlank() ||
-                            contrasena.isBlank() ||
-                            confirmarContrasena.isBlank() -> {
-                        "Debes completar todos los campos"
-                    }
-
-                    !Patterns.EMAIL_ADDRESS.matcher(correo.trim()).matches() -> {
-                        "Ingresa un correo electrónico válido"
-                    }
-
-                    contrasena.length < 8 -> {
-                        "La contraseña debe tener al menos 8 caracteres"
-                    }
-
-                    contrasena != confirmarContrasena -> {
-                        "Las contraseñas no coinciden"
-                    }
-
-
-                    else -> {
-                        val registrado = RegistroLocal.guardarUsuario(
-                            nombre,
-                            correo
-                        )
-
-
-                        if (registrado) {
-                            mostrarConfirmacion = true
-                            ""
-                        } else {
-                            "Este correo ya está registrado"
-                        }
-
-                    }
-
-                }
-
-            },
-
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFAFC0F4),
-                contentColor = Color(0xFF172E55)
-            )
+            color = Color(0xFFAFC0F4)
         ) {
-            Text("Crear cuenta")
-        }
-
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        if (mensaje.isNotEmpty()) {
             Text(
-                text = mensaje,
-                color = MaterialTheme.colorScheme.primary)
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextButton(
-            onClick = { onVolverClick() },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Volver al inicio de sesión")
-        }
-
-        if (mostrarConfirmacion) {
-            AlertDialog(
-                onDismissRequest = {
-                    mostrarConfirmacion = false
-                },
-                title = {
-                    Text("Registro exitoso")
-                },
-                text = {
-                    Text(
-                        "Tu cuenta de prueba fue creada correctamente."
-                    )
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            onVolverClick()
-                        }
-                    ) {
-                        Text("Volver al Login")
-                    }
-                }
+                text = "Crear cuenta",
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color(0xFF172E55),
+                modifier = Modifier.padding(24.dp)
             )
         }
 
-    }
+        // Formulario
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp)
+        ) {
 
+            OutlinedTextField(
+                value = nombre,
+                onValueChange = { nombre = it },
+                label = { Text("Nombre completo") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = correo,
+                onValueChange = { correo = it },
+                label = { Text("Correo electrónico") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = contrasena,
+                onValueChange = { contrasena = it },
+                label = { Text("Contraseña") },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = confirmarContrasena,
+                onValueChange = { confirmarContrasena = it },
+                label = { Text("Confirmar contraseña") },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = {
+                    mensaje = when {
+
+                        nombre.isBlank() ||
+                                correo.isBlank() ||
+                                contrasena.isBlank() ||
+                                confirmarContrasena.isBlank() -> {
+                            "Debes completar todos los campos"
+                        }
+
+                        !Patterns.EMAIL_ADDRESS.matcher(correo.trim()).matches() -> {
+                            "Ingresa un correo electrónico válido"
+                        }
+
+                        contrasena.length < 8 -> {
+                            "La contraseña debe tener al menos 8 caracteres"
+                        }
+
+                        contrasena != confirmarContrasena -> {
+                            "Las contraseñas no coinciden"
+                        }
+
+                        else -> {
+                            val registrado = RegistroLocal.guardarUsuario(
+                                nombre,
+                                correo
+                            )
+
+                            if (registrado) {
+                                mostrarConfirmacion = true
+                                ""
+                            } else {
+                                "Este correo ya está registrado"
+                            }
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFAFC0F4),
+                    contentColor = Color(0xFF172E55)
+                )
+            ) {
+                Text("Crear cuenta")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (mensaje.isNotEmpty()) {
+                Text(
+                    text = mensaje,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            TextButton(
+                onClick = { onVolverClick() },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Volver al inicio de sesión")
+            }
+
+            if (mostrarConfirmacion) {
+                AlertDialog(
+                    onDismissRequest = {
+                        mostrarConfirmacion = false
+                    },
+                    title = {
+                        Text("Registro exitoso")
+                    },
+                    text = {
+                        Text("Tu cuenta de prueba fue creada correctamente.")
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = { onVolverClick() }
+                        ) {
+                            Text("Volver al Login")
+                        }
+                    }
+                )
+            }
+        }
+    }
 }

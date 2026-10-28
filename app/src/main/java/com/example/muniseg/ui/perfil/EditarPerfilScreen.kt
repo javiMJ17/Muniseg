@@ -35,19 +35,33 @@ fun EditarPerfilScreen(
 
 
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(24.dp)
     ) {
 
-        Text(
-            text = "Editar perfil",
-            style = MaterialTheme.typography.headlineMedium
-        )
+        // Encabezado celeste
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = Color(0xFFAFC0F4)
+        ) {
+            Text(
+                text = "Editar perfil",
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color(0xFF172E55),
+                modifier = Modifier.padding(24.dp)
+            )
+        }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        // Formulario
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp)
+        ) {
+        }
 
         // Nombre completo
         OutlinedTextField(

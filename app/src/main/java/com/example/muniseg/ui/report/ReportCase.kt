@@ -16,7 +16,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -24,11 +23,17 @@ import android.content.pm.PackageManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import android.Manifest
-import android.R
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.filled.CleaningServices
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Directions
+import androidx.compose.material.icons.filled.DirectionsCar
+import androidx.compose.material.icons.filled.LocalPolice
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.text.font.FontWeight
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,20 +44,24 @@ fun ReportCase(onBackClick: () -> Unit, onSubmitClick: () -> Unit){
     //Texto
     var descripcion by remember{mutableStateOf("")}
     var ubicacion by remember { mutableStateOf("")}
+
     //Categoria
     var expandedCategoria by remember {mutableStateOf(false)}
-    val categorias = listOf ("Seguridad", "Aseo y Ornato", "Transito", "Otro")
+    val categorias = listOf ("Seguridad", "Aseo y Ornato", "Tránsito", "Otro")
     var selectedCategory by remember { mutableStateOf(categorias[0])}
+
     //Prioridad
     var expandedPrioridad by remember { mutableStateOf(false)}
     val prioridades = listOf("Baja", "Media", "Alta")
     var selectedPriority by remember {mutableStateOf(prioridades[1])}
+
     //Permiso camara
     var hasCameraPermission by remember{
         mutableStateOf(
             ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
         )
     }
+
     //Camara
     var imageBitmap by remember {mutableStateOf<Bitmap?>(null)}
     val cameraLauncher = rememberLauncherForActivityResult(
@@ -62,7 +71,6 @@ fun ReportCase(onBackClick: () -> Unit, onSubmitClick: () -> Unit){
             }
         }
     )
-
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = {isGranted ->
@@ -73,6 +81,12 @@ fun ReportCase(onBackClick: () -> Unit, onSubmitClick: () -> Unit){
         }
     )
 
+    //Validacion
+    val isFormValid = descripcion.isNotBlank() && ubicacion.isNotBlank()
+    var showErrors by remember {mutableStateOf(false)}
+
+
+//Barra de título
 
     Scaffold(
         topBar = {
@@ -100,6 +114,9 @@ fun ReportCase(onBackClick: () -> Unit, onSubmitClick: () -> Unit){
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ){
+
+// Selector categoría
+
             ExposedDropdownMenuBox(
                 expanded = expandedCategoria,
                 onExpandedChange = {expandedCategoria = !expandedCategoria}
@@ -109,9 +126,41 @@ fun ReportCase(onBackClick: () -> Unit, onSubmitClick: () -> Unit){
                     onValueChange = {},
                     readOnly = true,
                     label = {Text("Categoría")},
+                    leadingIcon = {
+                        Row(verticalAlignment = Alignment.CenterVertically){
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .background(
+                                        color = Color.Gray,
+                                        shape = androidx.compose.foundation.shape.CircleShape
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ){
+                                Icon(
+                                    imageVector = when (selectedCategory){
+                                        "Seguridad" -> androidx.compose.material.icons.Icons.Default.LocalPolice
+                                        "Aseo y Ornato" -> androidx.compose.material.icons.Icons.Default.CleaningServices
+                                        "Tránsito" -> androidx.compose.material.icons.Icons.Default.DirectionsCar
+                                        else -> androidx.compose.material.icons.Icons.Default.MoreVert
+                                    },
+                                    contentDescription = "Iconos categoria",
+                                    tint = when(selectedCategory){
+                                        "Seguridad" -> Color.Blue
+                                        "Aseo y Ornato" -> Color.Yellow
+                                        "Tránsito" -> Color.Red
+                                        else -> Color.LightGray
+                                    },
+                                    modifier = Modifier.size(18.dp)
+
+                                )
+                            }
+                        }
+                    },
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCategoria)
                     },
+
                     modifier = Modifier
                         .fillMaxWidth()
                         .menuAnchor()
@@ -122,6 +171,37 @@ fun ReportCase(onBackClick: () -> Unit, onSubmitClick: () -> Unit){
                 ){
                     categorias.forEach { opcion -> DropdownMenuItem(
                         text = {Text(opcion)},
+                        leadingIcon = {
+                                Row(verticalAlignment = Alignment.CenterVertically){
+                                    Box(
+                                        modifier = Modifier
+                                            .size(32.dp)
+                                            .background(
+                                                color = Color.Gray,
+                                                shape = androidx.compose.foundation.shape.CircleShape
+                                            ),
+                                        contentAlignment = Alignment.Center
+                                    ){
+                                        Icon(
+                                            imageVector = when (opcion){
+                                                "Seguridad" -> androidx.compose.material.icons.Icons.Default.LocalPolice
+                                                "Aseo y Ornato" -> androidx.compose.material.icons.Icons.Default.CleaningServices
+                                                "Tránsito" -> androidx.compose.material.icons.Icons.Default.DirectionsCar
+                                                else -> androidx.compose.material.icons.Icons.Default.MoreVert
+                                            },
+                                            contentDescription = null,
+                                            tint = when(opcion){
+                                                "Seguridad" -> Color.Blue
+                                                "Aseo y Ornato" -> Color.Yellow
+                                                "Tránsito" -> Color.Red
+                                                else -> Color.LightGray
+                                            },
+                                            modifier = Modifier.size(18.dp)
+
+                                        )
+                                    }
+                                }
+                        },
                         onClick = {
                             selectedCategory = opcion
                             expandedCategoria = false
@@ -130,23 +210,51 @@ fun ReportCase(onBackClick: () -> Unit, onSubmitClick: () -> Unit){
                 }
             }
 
+//Espacio descripción
+
             Spacer(modifier = Modifier.height(8.dp))
+
             OutlinedTextField(
                 value = descripcion,
-                onValueChange = {descripcion = it},
+                onValueChange = {
+                    descripcion = it
+                    if (it.isNotBlank()) showErrors = false},
                 label={Text("Descripción")},
+                isError = showErrors && descripcion.isBlank(),
+                supportingText = {
+                    if(showErrors && descripcion.isBlank()){
+                        Text("Este campo es obligatorio.", color = MaterialTheme.colorScheme.error)
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3
             )
+
+
+//Espacio ubicación
+
             Spacer(modifier = Modifier.height(8.dp))
+
             OutlinedTextField(
                 value = ubicacion,
-                onValueChange = {ubicacion = it},
+                onValueChange = {
+                    ubicacion = it
+                    if(it.isNotBlank()) showErrors = false
+                },
                 label ={Text("Ubicación (referencial)")},
+                isError = showErrors && ubicacion.isBlank(),
+                supportingText = {
+                    if(showErrors && ubicacion.isBlank()){
+                        Text("Este campo es obligatorio.", color = MaterialTheme.colorScheme.error)
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
-
             )
+
+//Selector prioridad
+
             Spacer(modifier = Modifier.height(8.dp))
+
             ExposedDropdownMenuBox(
                 expanded = expandedPrioridad,
                 onExpandedChange = {expandedPrioridad = !expandedPrioridad}
@@ -156,9 +264,35 @@ fun ReportCase(onBackClick: () -> Unit, onSubmitClick: () -> Unit){
                     onValueChange ={},
                     readOnly = true,
                     label = {Text("Prioridad")},
+                    leadingIcon = {
+                        Row(verticalAlignment = Alignment.CenterVertically){
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .background(
+                                        color = Color.Gray,
+                                        shape = androidx.compose.foundation.shape.CircleShape
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ){
+                                Icon(
+                                    imageVector = androidx.compose.material.icons.Icons.Default.Warning,
+                                    contentDescription = null,
+                                    tint = when(selectedPriority){
+                                        "Alta" -> Color.Red
+                                        "Media" -> Color.Yellow
+                                        "Baja" -> Color.Green
+                                        else -> Color.Gray
+                                    },
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
+                    },
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedPrioridad)
                     },
+
                     modifier = Modifier
                         .fillMaxWidth()
                         .menuAnchor()
@@ -169,6 +303,31 @@ fun ReportCase(onBackClick: () -> Unit, onSubmitClick: () -> Unit){
                 ){
                     prioridades.forEach { opcion -> DropdownMenuItem(
                         text = {Text(opcion)},
+                        leadingIcon = {
+                            Row(verticalAlignment = Alignment.CenterVertically){
+                                Box(
+                                    modifier = Modifier
+                                        .size(32.dp)
+                                        .background(
+                                            color = Color.Gray,
+                                            shape = androidx.compose.foundation.shape.CircleShape
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ){
+                                    Icon(
+                                        imageVector = androidx.compose.material.icons.Icons.Default.Warning,
+                                        contentDescription = null,
+                                        tint = when(opcion){
+                                            "Alta" -> Color.Red
+                                            "Media" -> Color.Yellow
+                                            "Baja" -> Color.Green
+                                            else -> Color.Gray
+                                        },
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                            }
+                        },
                         onClick = {
                             selectedPriority = opcion
                             expandedPrioridad = false
@@ -176,7 +335,11 @@ fun ReportCase(onBackClick: () -> Unit, onSubmitClick: () -> Unit){
                     }
                 }
             }
+
+// Espacio foto
+
             Spacer(modifier = Modifier.height(16.dp))
+
             Text("Evidencia fotográfica (opcional)", style = MaterialTheme.typography.labelLarge)
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -237,9 +400,18 @@ fun ReportCase(onBackClick: () -> Unit, onSubmitClick: () -> Unit){
                 }
             }
 
+//Boton Enviar
+
             Spacer(modifier = Modifier.height(24.dp))
+
             Button(
-                onClick = {onSubmitClick},
+                onClick = {
+                    if (descripcion.isNotBlank() && ubicacion.isNotBlank()){
+                        onSubmitClick()
+                    } else{
+                        showErrors = true
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             ){
                 Text("Enviar")
@@ -248,3 +420,4 @@ fun ReportCase(onBackClick: () -> Unit, onSubmitClick: () -> Unit){
         }
     }
 }
+

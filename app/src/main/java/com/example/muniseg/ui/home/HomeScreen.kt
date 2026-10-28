@@ -1,5 +1,6 @@
 package com.example.muniseg.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -7,14 +8,17 @@ import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.muniseg.R
+import com.example.muniseg.ui.navigation.AppBottomBar
+import com.example.muniseg.ui.navigation.Pantalla
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
@@ -23,11 +27,11 @@ import com.google.maps.android.compose.*
 @Composable
 fun HomeScreen(
     onReportClick:() -> Unit,
-    onProfileClick: () -> Unit
+    onMenuClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {
                     Text(
                         text = "San Joaquín",
@@ -36,13 +40,13 @@ fun HomeScreen(
                     )
                 },
                 actions = {
-                    IconButton(onClick = onProfileClick) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Perfil",
-                            tint = Color.Black
-                        )
-                    }
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "Logo San Joaquín",
+                        modifier = Modifier
+                            .size(48.dp)
+                            .padding(end = 8.dp)
+                    )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -50,32 +54,13 @@ fun HomeScreen(
             )
         },
         bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    selected = true,
-                    onClick = { },
-                    icon = { Icon(Icons.Default.LocationOn, contentDescription = "Reportes") },
-                    label = { Text("Reportes") }
+                AppBottomBar(
+                    pantallaActual = Pantalla.Home.ruta,
+                    onReportClick = { /* Ya estás en Home */ },
+                    onCasesClick = { /* Vacío por ahora */ },
+                    onMenuClick = onMenuClick
                 )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { },
-                    icon = { Icon(Icons.Default.Description, contentDescription = "Mis Casos") },
-                    label = { Text("Mis Casos") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { },
-                    icon = { Icon(Icons.Default.Notifications, contentDescription = "Notificaciones") },
-                    label = { Text("Notificaciones") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { },
-                    icon = { Icon(Icons.Default.Menu, contentDescription = "Menú") },
-                    label = { Text("Menú") }
-                )
-            }
+
         }
     ) { innerPadding ->
         val miUbicacion = LatLng(-33.49936500787212, -70.61654033901539)

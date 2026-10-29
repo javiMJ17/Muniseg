@@ -19,6 +19,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import com.example.muniseg.data.SessionManager
 import com.example.muniseg.repository.MunisegRepository
+import com.example.muniseg.ui.alertas.AlertasScreen
+import com.example.muniseg.ui.notificaciones.NotificacionesScreen
 
 
 sealed class Pantalla(val ruta: String) {
@@ -40,6 +42,11 @@ sealed class Pantalla(val ruta: String) {
 
     object MisCasos : Pantalla("mis_casos_screen")
 
+    object Alertas : Pantalla("alertas_screen")
+
+    object Notificaciones : Pantalla("notificaciones_screen")
+
+
     object  DetalleCaso: Pantalla("detalle_caso_screen/{casoId}"){
         fun crearRuta(id: String) = "detalle_caso_screen/$id"
     }
@@ -52,15 +59,7 @@ fun AppNavigation() {
     val context = LocalContext.current
     val session = remember { SessionManager(context) }
 
-    // Se calcula una sola vez al abrir la app
-    val destinoInicial = remember {
-        if (session.estaLogueado()) {
-            MunisegRepository.usuarioActual.value = session.obtenerNombre()
-            Pantalla.Home.ruta
-        } else {
-            Pantalla.Login.ruta
-        }
-    }
+
 
     // Una sola función para cerrar sesión, usada en Menu y Perfil
     val cerrarSesion = {
@@ -71,12 +70,14 @@ fun AppNavigation() {
         }
     }
 
+
     NavHost(
         navController = navController,
-        startDestination = destinoInicial
+        startDestination = Pantalla.Login.ruta
     ) {
 
-        composable(Pantalla.Login.ruta) {
+
+    composable(Pantalla.Login.ruta) {
             LoginScreen(
                 onLoginSuccess = {
                     navController.navigate(Pantalla.Home.ruta) {
@@ -101,16 +102,28 @@ fun AppNavigation() {
         }
 
 
+
         composable(Pantalla.Home.ruta) {
             HomeScreen(
-                onReportClick = { navController.navigate(Pantalla.NuevoCaso.ruta) },
-                onMenuClick = { navController.navigate(Pantalla.Menu.ruta) }
+                onReportClick = {
+                    navController.navigate(Pantalla.NuevoCaso.ruta)
+                },
+                onMenuClick = {
+                    navController.navigate(Pantalla.Menu.ruta)
+                },
+                onAlertasClick = {
+                    navController.navigate(Pantalla.Alertas.ruta)
+                },
+                onNotificacionesClick = {
+                    navController.navigate(Pantalla.Notificaciones.ruta)
+                }
             )
         }
+
         composable(Pantalla.Menu.ruta) {
             MenuScreen(
                 onProfileClick = { navController.navigate(Pantalla.Perfil.ruta) },
-                onCasesClick = {navController.navigate(Pantalla.MisCasos.ruta)},
+                onCasesClick = { navController.navigate(Pantalla.MisCasos.ruta) },
                 onLogoutClick = cerrarSesion,
                 onReportClick = {
                     navController.navigate(Pantalla.Home.ruta) {
@@ -123,14 +136,14 @@ fun AppNavigation() {
         composable(Pantalla.NuevoCaso.ruta) {
             ReportCase(
                 onBackClick = { navController.popBackStack() },
-                onSubmitClick = {navController.navigate(Pantalla.Confirmacion.ruta)}
+                onSubmitClick = { navController.navigate(Pantalla.Confirmacion.ruta) }
             )
         }
-        composable (Pantalla.Confirmacion.ruta){
+        composable(Pantalla.Confirmacion.ruta) {
             ConfirmationScreen(
                 onNavigateHome = {
-                    navController.navigate(Pantalla.Home.ruta){
-                        popUpTo(0){inclusive = true}
+                    navController.navigate(Pantalla.Home.ruta) {
+                        popUpTo(0) { inclusive = true }
                     }
                 },
                 onNavigateMisCasos = {
@@ -162,19 +175,83 @@ fun AppNavigation() {
             )
         }
 
-        composable(Pantalla.MisCasos.ruta){
+        composable(Pantalla.MisCasos.ruta) {
             CasesListScreen(
-                onBackClick = {navController.popBackStack()},
-                onCaseClick = {idCaso -> navController.navigate(Pantalla.DetalleCaso.crearRuta(idCaso))}
+                onBackClick = { navController.popBackStack() },
+                onCaseClick = { idCaso ->
+                    navController.navigate(
+                        Pantalla.DetalleCaso.crearRuta(
+                            idCaso
+                        )
+                    )
+                }
             )
         }
 
-        composable(Pantalla.DetalleCaso.ruta) {backStackEntry ->
-            val casoId = backStackEntry.arguments?.getString("casoId") ?:""
+        composable(Pantalla.DetalleCaso.ruta) { backStackEntry ->
+            val casoId = backStackEntry.arguments?.getString("casoId") ?: ""
             CaseDetailScreen(
                 casoId = casoId,
-                onBackClick = {navController.popBackStack()}
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+
+        // Pantalla Alertas
+
+        composable(Pantalla.Alertas.ruta) {
+            AlertasScreen(
+                onVolverClick = {
+                    navController.popBackStack()
+                },
+                onCasoClick = { idCaso ->
+                    navController.navigate(
+                        Pantalla.DetalleCaso.crearRuta(idCaso)
+                    )
+                },
+                onInicioClick = {
+                    navController.navigate(Pantalla.Home.ruta) {
+                        launchSingleTop = true
+                    }
+                },
+                onNotificacionesClick = {
+                    navController.navigate(Pantalla.Notificaciones.ruta) {
+                        launchSingleTop = true
+                    }
+                },
+                onMenuClick = {
+                    navController.navigate(Pantalla.Menu.ruta) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+
+        // Pantalla Notificaciones
+
+        composable(Pantalla.Notificaciones.ruta) {
+            NotificacionesScreen(
+                onVolverClick = {
+                    navController.popBackStack()
+                },
+                onInicioClick = {
+                    navController.navigate(Pantalla.Home.ruta) {
+                        launchSingleTop = true
+                    }
+                },
+                onAlertasClick = {
+                    navController.navigate(Pantalla.Alertas.ruta) {
+                        launchSingleTop = true
+                    }
+                },
+                onMenuClick = {
+                    navController.navigate(Pantalla.Menu.ruta) {
+                        launchSingleTop = true
+                    }
+                }
             )
         }
     }
+
 }

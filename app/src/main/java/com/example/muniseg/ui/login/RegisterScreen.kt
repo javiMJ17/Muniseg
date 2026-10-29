@@ -13,6 +13,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
+import com.example.muniseg.data.AppDatabase
+import com.example.muniseg.data.UsuarioEntity
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,6 +29,8 @@ fun RegisterScreen(
     var confirmarContrasena by remember { mutableStateOf("") }
     var mensaje by remember { mutableStateOf("") }
     var mostrarConfirmacion by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -102,37 +108,43 @@ fun RegisterScreen(
 
             Button(
                 onClick = {
-                    mensaje = when {
-                        nombre.isBlank() ||
-                                correo.isBlank() ||
-                                contrasena.isBlank() ||
-                                confirmarContrasena.isBlank() -> {
-                            "Debes completar todos los campos"
-                        }
+                    val correoLimpio = correo.trim().lowercase()
 
-                        !Patterns.EMAIL_ADDRESS.matcher(correo.trim()).matches() -> {
-                            "Ingresa un correo electrónico válido"
+                    when {
+                        nombre.isBlank() || correo.isBlank() ||
+                                contrasena.isBlank() || confirmarContrasena.isBlank() -> {
+                            mensaje = "Debes completar todos los campos"
                         }
-
+                        !Patterns.EMAIL_ADDRESS.matcher(correoLimpio).matches() -> {
+                            mensaje = "Ingresa un correo electrónico válido"
+                        }
                         contrasena.length < 8 -> {
-                            "La contraseña debe tener al menos 8 caracteres"
+                            mensaje = "La contraseña debe tener al menos 8 caracteres"
                         }
-
                         contrasena != confirmarContrasena -> {
-                            "Las contraseñas no coinciden"
+                            mensaje = "Las contraseñas no coinciden"
                         }
-
                         else -> {
-                            val registrado = RegistroLocal.guardarUsuario(
-                                nombre,
-                                correo
-                            )
+                            coroutineScope.launch {
+                                try {
+                                    val dao = AppDatabase.getDatabase(context).usuarioDao()
 
-                            if (registrado) {
-                                mostrarConfirmacion = true
-                                ""
-                            } else {
-                                "Este correo ya está registrado"
+                                    if (dao.obtenerUsuarioPorCorreo(correoLimpio) != null) {
+                                        mensaje = "Este correo ya está registrado"
+                                    } else {
+                                        dao.insertarUsuario(
+                                            UsuarioEntity(
+                                                nombre = nombre.trim(),
+                                                correo = correoLimpio,
+                                                contrasena = contrasena
+                                            )
+                                        )
+                                        mensaje = ""
+                                        mostrarConfirmacion = true
+                                    }
+                                } catch (e: Exception) {
+                                    mensaje = "No se pudo crear la cuenta, intenta de nuevo"
+                                }
                             }
                         }
                     }
@@ -145,7 +157,6 @@ fun RegisterScreen(
             ) {
                 Text("Crear cuenta", fontWeight = FontWeight.Bold)
             }
-
             Spacer(modifier = Modifier.height(16.dp))
 
             if (mensaje.isNotEmpty()) {

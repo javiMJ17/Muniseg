@@ -41,7 +41,7 @@ fun MenuScreen(
             AppBottomBar(
                 pantallaActual = Pantalla.Menu.ruta,
                 onReportClick = onReportClick,
-                onCasesClick = onCasesClick,
+                onCasesClick = { /* Vacío por ahora */ },
                 onMenuClick = { /* Ya estás en Menú */ }
             )
 

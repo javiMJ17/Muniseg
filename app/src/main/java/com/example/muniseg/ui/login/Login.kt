@@ -27,33 +27,30 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.muniseg.R
+import com.example.muniseg.data.AppDatabase
+import com.example.muniseg.data.SessionManager
 import com.example.muniseg.repository.MunisegRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-
-
-
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onRegisterClick: () -> Unit
 ) {
-
-
-
-    var usuario by remember { mutableStateOf("") }
+    var correo by remember { mutableStateOf("") } // Funciona como el correo
     var contrasena by remember { mutableStateOf("") }
     var cargando by remember { mutableStateOf(false) }
+    var mensajeError by remember { mutableStateOf("") } // Para mostrar si el login falla
 
-    // Declaramos el scope para manejar la animación y la pausa de carga
+    // Obtenemos el contexto de forma segura para Room
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -73,16 +70,16 @@ fun LoginScreen(
         Image(
             painter = painterResource(id = R.drawable.muniseg),
             contentDescription = "Logo de la app",
-            modifier = Modifier.size(300.dp)
+            modifier = Modifier.size(250.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
-            value = usuario,
-            onValueChange = { usuario = it },
-            label = { Text("Usuario") },
+            value = correo,
+            onValueChange = { correo = it },
+            label = { Text("Ingresa tu Correo") },
             singleLine = true,
-            enabled = !cargando, // Se bloquea mientras carga
+            enabled = !cargando,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(10.dp))
@@ -92,35 +89,59 @@ fun LoginScreen(
             onValueChange = { contrasena = it },
             label = { Text("Contraseña") },
             singleLine = true,
-            enabled = !cargando, // Se bloquea mientras carga
+            enabled = !cargando,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Muestra el error de credenciales si falla
+        if (mensajeError.isNotEmpty()) {
+            Text(
+                text = mensajeError,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         Button(
             onClick = {
-                if (usuario.isNotBlank()) {
+                if (correo.isNotBlank() && contrasena.isNotBlank()) {
                     cargando = true
-                    coroutineScope.launch {
-                        // Simulamos un pequeño retraso de red (1.2 segundos)
-                        delay(1200)
+                    mensajeError = ""
 
-                        // Guardamos el nombre que digitó el usuario en el repositorio
-                        MunisegRepository.usuarioActual.value = usuario.trim()
+                    coroutineScope.launch {
+                        val correoLimpio = correo.trim().lowercase()
+
+                        // Consultamos directamente en la base de datos local de Room
+                        val dao = AppDatabase.getDatabase(context).usuarioDao()
+                        val usuarioEncontrado = dao.obtenerUsuarioPorCredenciales(correoLimpio, contrasena)
 
                         cargando = false
-                        onLoginSuccess() // Navegamos a la pantalla Home
+
+                        if (usuarioEncontrado != null) {
+                            // Si existe en Room, guardamos su nombre real y dejamos pasar
+                            SessionManager(context).guardarSesion(usuarioEncontrado.nombre, correoLimpio)
+                            MunisegRepository.usuarioActual.value = usuarioEncontrado.nombre
+                            onLoginSuccess()
+                        } else {
+                            // Si no existe o la contraseña no coincide, bloqueamos el acceso
+                            mensajeError = "Correo o contraseña incorrectos"
+                        }
                     }
+                } else {
+                    mensajeError = "Completa todos los campos"
                 }
             },
-            enabled = !cargando && usuario.isNotBlank(),
+            enabled = !cargando && correo.isNotBlank() && contrasena.isNotBlank(),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
             if (cargando) {
-                // Indicador de progreso circular mientras "carga"
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),
                     color = MaterialTheme.colorScheme.onPrimary,
@@ -148,7 +169,7 @@ fun LoginScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         Row(
             modifier = Modifier.padding(bottom = 16.dp),
@@ -170,7 +191,6 @@ fun LoginScreen(
                     fontWeight = FontWeight.Bold
                 )
             }
-
-        }
         }
     }
+}

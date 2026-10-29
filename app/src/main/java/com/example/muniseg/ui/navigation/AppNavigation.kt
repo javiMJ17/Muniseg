@@ -15,6 +15,10 @@ import com.example.muniseg.ui.perfil.EditarPerfilScreen
 import com.example.muniseg.ui.report.ConfirmationScreen
 import com.example.muniseg.ui.report.CasesListScreen
 import com.example.muniseg.ui.report.CaseDetailScreen
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import com.example.muniseg.data.SessionManager
+import com.example.muniseg.repository.MunisegRepository
 
 
 sealed class Pantalla(val ruta: String) {
@@ -45,10 +49,31 @@ sealed class Pantalla(val ruta: String) {
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
+    val context = LocalContext.current
+    val session = remember { SessionManager(context) }
+
+    // Se calcula una sola vez al abrir la app
+    val destinoInicial = remember {
+        if (session.estaLogueado()) {
+            MunisegRepository.usuarioActual.value = session.obtenerNombre()
+            Pantalla.Home.ruta
+        } else {
+            Pantalla.Login.ruta
+        }
+    }
+
+    // Una sola función para cerrar sesión, usada en Menu y Perfil
+    val cerrarSesion = {
+        session.cerrarSesion()
+        MunisegRepository.usuarioActual.value = ""
+        navController.navigate(Pantalla.Login.ruta) {
+            popUpTo(0) { inclusive = true }
+        }
+    }
 
     NavHost(
         navController = navController,
-        startDestination = Pantalla.Login.ruta
+        startDestination = destinoInicial
     ) {
 
         composable(Pantalla.Login.ruta) {
@@ -86,11 +111,7 @@ fun AppNavigation() {
             MenuScreen(
                 onProfileClick = { navController.navigate(Pantalla.Perfil.ruta) },
                 onCasesClick = {navController.navigate(Pantalla.MisCasos.ruta)},
-                onLogoutClick = {
-                    navController.navigate(Pantalla.Login.ruta) {
-                        popUpTo(0) { inclusive = true }
-                    }
-                },
+                onLogoutClick = cerrarSesion,
                 onReportClick = {
                     navController.navigate(Pantalla.Home.ruta) {
                         popUpTo(Pantalla.Home.ruta) { inclusive = true }
@@ -125,13 +146,7 @@ fun AppNavigation() {
                 onBackClick = {
                     navController.popBackStack()
                 },
-                onLogoutClick = {
-                    navController.navigate(Pantalla.Login.ruta) {
-                        popUpTo(0) {
-                            inclusive = true
-                        }
-                    }
-                },
+                onLogoutClick = cerrarSesion,
                 onEditClick = {
                     navController.navigate(Pantalla.EditarPerfil.ruta)
                 }

@@ -101,25 +101,6 @@ fun PerfilScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Botón de Cerrar Sesión
-            Button(
-                onClick = onLogoutClick,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-            ) {
-                Icon(
-
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Cerrar Sesión", fontWeight = FontWeight.Bold)
-            }
-
             Button(
                 onClick = onEditClick,
                 modifier = Modifier

@@ -1,6 +1,5 @@
 package com.example.muniseg.ui.login
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -11,13 +10,15 @@ import android.util.Patterns
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.graphics.Color
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.ui.text.font.FontWeight
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
 fun RegisterScreen(
-    onVolverClick: () -> Unit ){
-
+    onVolverClick: () -> Unit
+) {
     var nombre by remember { mutableStateOf("") }
     var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
@@ -25,36 +26,38 @@ fun RegisterScreen(
     var mensaje by remember { mutableStateOf("") }
     var mostrarConfirmacion by remember { mutableStateOf(false) }
 
-
-
-
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
-
-        // Encabezado celeste
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = Color(0xFFAFC0F4)
-        ) {
-            Text(
-                text = "Crear cuenta",
-                style = MaterialTheme.typography.headlineMedium,
-                color = Color(0xFF172E55),
-                modifier = Modifier.padding(24.dp)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Crear cuenta",
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF172E55)
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onVolverClick) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = Color(0xFF172E55)
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFFAFC0F4)
+                )
             )
         }
-
-        // Formulario
+    ) { paddingValues ->
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
                 .padding(24.dp)
         ) {
-
             OutlinedTextField(
                 value = nombre,
                 onValueChange = { nombre = it },
@@ -100,7 +103,6 @@ fun RegisterScreen(
             Button(
                 onClick = {
                     mensaje = when {
-
                         nombre.isBlank() ||
                                 correo.isBlank() ||
                                 contrasena.isBlank() ||
@@ -141,7 +143,7 @@ fun RegisterScreen(
                     contentColor = Color(0xFF172E55)
                 )
             ) {
-                Text("Crear cuenta")
+                Text("Crear cuenta", fontWeight = FontWeight.Bold)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -149,17 +151,8 @@ fun RegisterScreen(
             if (mensaje.isNotEmpty()) {
                 Text(
                     text = mensaje,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.error
                 )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            TextButton(
-                onClick = { onVolverClick() },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Volver al inicio de sesión")
             }
 
             if (mostrarConfirmacion) {

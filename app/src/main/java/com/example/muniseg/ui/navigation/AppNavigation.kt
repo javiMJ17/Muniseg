@@ -68,8 +68,6 @@ fun AppNavigation() {
         }
 
 
-
-
         composable(Pantalla.Home.ruta) {
             HomeScreen(
                 onReportClick = { navController.navigate(Pantalla.NuevoCaso.ruta) },

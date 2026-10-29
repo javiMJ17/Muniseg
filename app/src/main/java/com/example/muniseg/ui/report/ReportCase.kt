@@ -35,6 +35,9 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.text.font.FontWeight
+import com.example.muniseg.model.SectorReferencial
+import com.example.muniseg.repository.MunisegRepository
+import com.google.android.gms.maps.model.LatLng
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -407,6 +410,13 @@ fun ReportCase(onBackClick: () -> Unit, onSubmitClick: () -> Unit){
             Button(
                 onClick = {
                     if (descripcion.isNotBlank() && ubicacion.isNotBlank()){
+                        MunisegRepository.agregarIncidencia(
+                            titulo = "$selectedCategory (Prioridad: $selectedPriority)",
+                            categoria = selectedCategory,
+                            descripcion = descripcion,
+                            sector = SectorReferencial(ubicacion, LatLng(-33.499365, -70.616540)),
+                            foto = imageBitmap
+                        )
                         onSubmitClick()
                     } else{
                         showErrors = true

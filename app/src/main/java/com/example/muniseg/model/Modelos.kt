@@ -2,6 +2,7 @@ package com.example.muniseg.model
 
 
 import com.google.android.gms.maps.model.LatLng
+import android.graphics.Bitmap
 
 enum class RolUsuario(val titulo: String, val aliasAnonimo: String) {
     VECINO("Vecino / Ciudadano", "Vecino Anónimo #104"),
@@ -38,5 +39,6 @@ data class Incidencia(
     val reportadoPor: String,
     val inspectorAsignado: String? = null,
     val estado: EstadoCaso = EstadoCaso.INGRESADO,
-    val trazabilidad: List<EventoTrazabilidad> = emptyList()
+    val trazabilidad: List<EventoTrazabilidad> = emptyList(),
+    val foto: Bitmap? = null
 )

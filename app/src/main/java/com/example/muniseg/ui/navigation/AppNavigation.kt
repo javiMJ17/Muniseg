@@ -13,6 +13,8 @@ import com.example.muniseg.ui.perfil.PerfilScreen
 import com.example.muniseg.ui.login.LoginScreen
 import com.example.muniseg.ui.perfil.EditarPerfilScreen
 import com.example.muniseg.ui.report.ConfirmationScreen
+import com.example.muniseg.ui.report.CasesListScreen
+import com.example.muniseg.ui.report.CaseDetailScreen
 
 
 sealed class Pantalla(val ruta: String) {
@@ -31,6 +33,12 @@ sealed class Pantalla(val ruta: String) {
     object Confirmacion : Pantalla("confirmacion_screen")
 
     object Menu : Pantalla("menu_screen")
+
+    object MisCasos : Pantalla("mis_casos_screen")
+
+    object  DetalleCaso: Pantalla("detalle_caso_screen/{casoId}"){
+        fun crearRuta(id: String) = "detalle_caso_screen/$id"
+    }
 }
 
 
@@ -77,7 +85,7 @@ fun AppNavigation() {
         composable(Pantalla.Menu.ruta) {
             MenuScreen(
                 onProfileClick = { navController.navigate(Pantalla.Perfil.ruta) },
-                onCasesClick = { /* ... */ },
+                onCasesClick = {navController.navigate(Pantalla.MisCasos.ruta)},
                 onLogoutClick = {
                     navController.navigate(Pantalla.Login.ruta) {
                         popUpTo(0) { inclusive = true }
@@ -104,7 +112,11 @@ fun AppNavigation() {
                         popUpTo(0){inclusive = true}
                     }
                 },
-                onNavigateMisCasos ={/*Pantalla mis casos */}
+                onNavigateMisCasos = {
+                    navController.navigate(Pantalla.MisCasos.ruta) {
+                        popUpTo(Pantalla.Home.ruta)
+                    }
+                }
             )
         }
 
@@ -132,6 +144,21 @@ fun AppNavigation() {
                 onVolverClick = {
                     navController.popBackStack()
                 }
+            )
+        }
+
+        composable(Pantalla.MisCasos.ruta){
+            CasesListScreen(
+                onBackClick = {navController.popBackStack()},
+                onCaseClick = {idCaso -> navController.navigate(Pantalla.DetalleCaso.crearRuta(idCaso))}
+            )
+        }
+
+        composable(Pantalla.DetalleCaso.ruta) {backStackEntry ->
+            val casoId = backStackEntry.arguments?.getString("casoId") ?:""
+            CaseDetailScreen(
+                casoId = casoId,
+                onBackClick = {navController.popBackStack()}
             )
         }
     }

@@ -7,6 +7,7 @@ import com.example.muniseg.model.*
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.graphics.Bitmap
 
 object MunisegRepository {
     var rolActual = mutableStateOf(RolUsuario.VECINO)
@@ -79,7 +80,7 @@ object MunisegRepository {
         )
     )
 
-    fun agregarIncidencia(titulo: String, categoria: String, descripcion: String, sector: SectorReferencial) {
+    fun agregarIncidencia(titulo: String, categoria: String, descripcion: String, sector: SectorReferencial, foto: Bitmap? = null) {
         val ahora = obtenerHora()
         val nuevoId = "CASO-${104 + listaIncidencias.size}"
         val nueva = Incidencia(
@@ -91,6 +92,7 @@ object MunisegRepository {
             fechaCreacion = ahora,
             reportadoPor = rolActual.value.aliasAnonimo,
             estado = EstadoCaso.INGRESADO,
+            foto = foto,
             trazabilidad = listOf(
                 EventoTrazabilidad(ahora, RolUsuario.VECINO, "Requerimiento ingresado con ubicación referencial anonimizada.", EstadoCaso.INGRESADO)
             )
@@ -136,5 +138,9 @@ object MunisegRepository {
 
     private fun obtenerHora(): String {
         return SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(Date())
+    }
+
+    fun eliminarCaso(idCaso: String){
+        listaIncidencias.removeAll{it.id == idCaso}
     }
 }

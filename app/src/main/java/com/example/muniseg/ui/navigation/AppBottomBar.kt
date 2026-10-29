@@ -16,31 +16,60 @@ fun AppBottomBar(
     pantallaActual: String,
     onReportClick: () -> Unit,
     onCasesClick: () -> Unit,
-    onMenuClick: () -> Unit
+    onMenuClick: () -> Unit,
+    onNotificationsClick: () -> Unit = {}
 ) {
     NavigationBar {
+
+        // Reportes
         NavigationBarItem(
             selected = pantallaActual == Pantalla.Home.ruta,
             onClick = onReportClick,
-            icon = { Icon(Icons.Default.LocationOn, contentDescription = "Reportes") },
+            icon = {
+                Icon(
+                    Icons.Default.LocationOn,
+                    contentDescription = "Reportes"
+                )
+            },
             label = { Text("Reportes") }
         )
+
+        // Alertas
         NavigationBarItem(
-            selected = false,
+            selected = pantallaActual == Pantalla.Alertas.ruta,
             onClick = onCasesClick,
-            icon = { Icon(Icons.Default.Campaign, contentDescription = "Alertas") },
+            icon = {
+                Icon(
+                    Icons.Default.Campaign,
+                    contentDescription = "Alertas"
+                )
+            },
             label = { Text("Alertas") }
         )
+
+        // Notificaciones
         NavigationBarItem(
-            selected = false,
-            onClick = { },
-            icon = { Icon(Icons.Default.Notifications, contentDescription = "Notificaciones") },
+            selected = pantallaActual == Pantalla.Notificaciones.ruta,
+            onClick = onNotificationsClick,
+            icon = {
+                Icon(
+                    Icons.Default.Notifications,
+                    contentDescription = "Notificaciones"
+                )
+            },
             label = { Text("Notificaciones") }
         )
+
+        // Menú
         NavigationBarItem(
-            selected = pantallaActual == Pantalla.Menu.ruta, // <--- SE MARCA SEGÚN LA RUTA
+            selected = pantallaActual == Pantalla.Menu.ruta,
             onClick = onMenuClick,
-            icon = { Icon(Icons.Default.Menu, contentDescription = "Menú") },
+            icon = {
+                Icon(
+                    Icons.Default.Menu,
+                    contentDescription = "Menú"
+                )
+            },
             label = { Text("Menú") }
         )
     }

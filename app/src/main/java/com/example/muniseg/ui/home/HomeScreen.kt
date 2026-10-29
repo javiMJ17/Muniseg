@@ -30,11 +30,16 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+
 fun HomeScreen(
     onReportClick: () -> Unit,
     onMenuClick: () -> Unit,
+    onAlertasClick: () -> Unit,
+    onNotificacionesClick: () -> Unit,
     viewModel: HomeViewModel = viewModel()
-) {
+)
+
+  {
     val context = LocalContext.current
     var permisoConcedido by remember { mutableStateOf(false) }
 
@@ -85,12 +90,15 @@ fun HomeScreen(
             )
         },
         bottomBar = {
+
             AppBottomBar(
                 pantallaActual = Pantalla.Home.ruta,
-                onReportClick = { /* Ya estás en Home */ },
-                onCasesClick = { /* Vacío por ahora */ },
-                onMenuClick = onMenuClick
+                onReportClick = { /* Ya estamos en Inicio */ },
+                onCasesClick = onAlertasClick,
+                onMenuClick = onMenuClick,
+                onNotificationsClick = onNotificacionesClick
             )
+
         }
     ) { innerPadding ->
         val lugar1 = LatLng(-33.497672632070476, -70.6126025410391)

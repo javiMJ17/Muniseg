@@ -97,6 +97,6 @@ com.example.muniseg/
 
 ## Gestión del proyecto
 
-    Tablero Trello:
+    Tablero Trello: https://trello.com/b/Ja2Vj1zs
 
     Video de demostración:

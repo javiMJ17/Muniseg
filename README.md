@@ -8,8 +8,9 @@ Aplicación móvil desarrollada para Android orientada a la seguridad ciudadana 
 
 | Nombre | Rol / Usuario |
 | :--- | :--- |
-| **Isaac Manzor** | Estudiante / Desarrollador FullStack Android |
-| **Javier** (`javiMJ17`) | Estudiante / Desarrollador Móvil |
+| **Isaac Manzor**    | Estudiante |
+| **Javier Castro**   | Estudiante |
+| **Benjamin Labrin** | Estudiante |
 
 ---
 
@@ -56,9 +57,10 @@ Aplicación móvil desarrollada para Android orientada a la seguridad ciudadana 
 
 ---
 
-## Estructura del Proyecto
+## Estructura del proyecto
+
+```text
 com.example.muniseg/
-│
 ├── data/               # Base de datos Room (AppDatabase, UsuarioDao, UsuarioEntity, SessionManager)
 ├── model/              # Modelos de datos (Incidencia, RolUsuario, SectorReferencial, etc.)
 ├── repository/         # Repositorio central de estados compartidos (MunisegRepository)
@@ -71,6 +73,7 @@ com.example.muniseg/
 │   ├── perfil/         # PerfilScreen y EditarPerfilScreen
 │   └── report/         # Formulario de creación de incidencias
 └── MainActivity.kt     # Punto de entrada principal de la aplicación
+```
 
 ---
 

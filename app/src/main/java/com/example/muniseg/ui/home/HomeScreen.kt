@@ -79,13 +79,6 @@ fun HomeScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(text = "San Joaquín", fontWeight = FontWeight.Bold, color = Color.Black) },
-                actions = {
-                    Image(
-                        painter = painterResource(id = R.drawable.logo),
-                        contentDescription = "Logo San Joaquín",
-                        modifier = Modifier.size(48.dp).padding(end = 8.dp)
-                    )
-                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
             )
         },

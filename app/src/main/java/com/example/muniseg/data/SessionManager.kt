@@ -20,6 +20,8 @@ class SessionManager(context: Context) {
 
     fun obtenerNombre(): String = prefs.getString("nombre", "") ?: ""
 
+    fun obtenerCorreo(): String = prefs.getString("correo", "") ?: ""
+
     fun cerrarSesion() {
         prefs.edit().clear().apply()
     }

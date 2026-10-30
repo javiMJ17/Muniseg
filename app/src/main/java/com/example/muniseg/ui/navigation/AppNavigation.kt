@@ -59,7 +59,15 @@ fun AppNavigation() {
     val context = LocalContext.current
     val session = remember { SessionManager(context) }
 
-
+    // Se calcula una sola vez al abrir la app
+    val destinoInicial = remember {
+        if (session.estaLogueado()) {
+            MunisegRepository.usuarioActual.value = session.obtenerNombre()
+            Pantalla.Home.ruta
+        } else {
+            Pantalla.Login.ruta
+        }
+    }
 
     // Una sola función para cerrar sesión, usada en Menu y Perfil
     val cerrarSesion = {
@@ -70,10 +78,9 @@ fun AppNavigation() {
         }
     }
 
-
     NavHost(
         navController = navController,
-        startDestination = Pantalla.Login.ruta
+        startDestination = destinoInicial
     ) {
 
 
@@ -126,8 +133,20 @@ fun AppNavigation() {
                 onCasesClick = { navController.navigate(Pantalla.MisCasos.ruta) },
                 onLogoutClick = cerrarSesion,
                 onReportClick = {
+                    navController.navigate(Pantalla.NuevoCaso.ruta)
+                },
+                onInicioClick = {
                     navController.navigate(Pantalla.Home.ruta) {
-                        popUpTo(Pantalla.Home.ruta) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+                onAlertasClick = {
+                    navController.navigate(Pantalla.Alertas.ruta) {
+                        launchSingleTop = true
+                    }
+                },
+                onNotificacionesClick = {
+                    navController.navigate(Pantalla.Notificaciones.ruta) {
                         launchSingleTop = true
                     }
                 }
@@ -159,7 +178,6 @@ fun AppNavigation() {
                 onBackClick = {
                     navController.popBackStack()
                 },
-                onLogoutClick = cerrarSesion,
                 onEditClick = {
                     navController.navigate(Pantalla.EditarPerfil.ruta)
                 }
@@ -201,9 +219,6 @@ fun AppNavigation() {
 
         composable(Pantalla.Alertas.ruta) {
             AlertasScreen(
-                onVolverClick = {
-                    navController.popBackStack()
-                },
                 onCasoClick = { idCaso ->
                     navController.navigate(
                         Pantalla.DetalleCaso.crearRuta(idCaso)
@@ -232,9 +247,6 @@ fun AppNavigation() {
 
         composable(Pantalla.Notificaciones.ruta) {
             NotificacionesScreen(
-                onVolverClick = {
-                    navController.popBackStack()
-                },
                 onInicioClick = {
                     navController.navigate(Pantalla.Home.ruta) {
                         launchSingleTop = true

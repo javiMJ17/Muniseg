@@ -24,7 +24,10 @@ fun MenuScreen(
     onProfileClick: () -> Unit,
     onCasesClick: () -> Unit,
     onLogoutClick: () -> Unit,
-    onReportClick: () -> Unit
+    onInicioClick: () -> Unit,
+    onReportClick: () -> Unit,
+    onAlertasClick: () -> Unit,
+    onNotificacionesClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -40,8 +43,9 @@ fun MenuScreen(
         bottomBar = {
             AppBottomBar(
                 pantallaActual = Pantalla.Menu.ruta,
-                onReportClick = onReportClick,
-                onCasesClick = { /* Vacío por ahora */ },
+                onReportClick = onInicioClick,
+                onCasesClick = onAlertasClick,
+                onNotificationsClick = onNotificacionesClick,
                 onMenuClick = { /* Ya estás en Menú */ }
             )
 

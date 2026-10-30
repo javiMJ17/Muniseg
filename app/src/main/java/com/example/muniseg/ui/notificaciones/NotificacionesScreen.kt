@@ -21,7 +21,6 @@ import com.example.muniseg.ui.navigation.Pantalla
 @Composable
 
 fun NotificacionesScreen(
-    onVolverClick: () -> Unit,
     onInicioClick: () -> Unit,
     onAlertasClick: () -> Unit,
     onMenuClick: () -> Unit
@@ -30,22 +29,13 @@ fun NotificacionesScreen(
  {
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {
                     Text(
                         text = "Notificaciones",
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF172E55)
                     )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onVolverClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Volver",
-                            tint = Color(0xFF172E55)
-                        )
-                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(0xFFAFC0F4)

@@ -1,4 +1,3 @@
-
 package com.example.muniseg.remote
 
 import retrofit2.http.Body
@@ -6,12 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-
-
-
-
-
-// Datos de una incidencia obtenida desde Xano
+// Datos recibidos desde Xano
 data class IncidenciaApi(
     val id: Int,
     val created_at: Long,
@@ -23,7 +17,7 @@ data class IncidenciaApi(
     val prioridad: String
 )
 
-// Datos que enviaremos para registrar una incidencia
+// Datos para registrar una incidencia
 data class NuevaIncidenciaApi(
     val titulo: String,
     val descripcion: String,
@@ -33,26 +27,37 @@ data class NuevaIncidenciaApi(
     val prioridad: String = "Media"
 )
 
-// Endpoints de nuestra API
 interface MunisegApi {
 
-    // GET: consultar todas las incidencias
+    // Endpoint 1: consultar incidencias
     @GET("incidencias")
     suspend fun obtenerIncidencias(): List<IncidenciaApi>
 
-    // POST: registrar una nueva incidencia
+    // Endpoint 2: registrar incidencia
     @POST("incidencias")
     suspend fun registrarIncidencia(
         @Body incidencia: NuevaIncidenciaApi
     ): IncidenciaApi
 
-    // GET: consultar una incidencia por su ID
+    // Endpoint 3: consultar incidencia por ID
     @GET("incidencias/{incidencias_id}")
     suspend fun obtenerIncidenciaPorId(
         @Path("incidencias_id") id: Int
     ): IncidenciaApi
 
+    // Endpoint 4: consultar categorias
+    @GET("categorias")
+    suspend fun obtenerCategorias(): List<String>
 
+    // Endpoint 5: consultar prioridades
+    @GET("prioridades")
+    suspend fun obtenerPrioridades(): List<String>
 
+    // Endpoint 6: consultar estados
+    @GET("estados")
+    suspend fun obtenerEstados(): List<String>
 
+    // Endpoint 7: consultar alertas activas
+    @GET("alertas")
+    suspend fun obtenerAlertas(): List<IncidenciaApi>
 }

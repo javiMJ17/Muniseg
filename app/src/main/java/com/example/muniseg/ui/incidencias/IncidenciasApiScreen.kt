@@ -14,6 +14,12 @@ import com.example.muniseg.repository.IncidenciasRepositoryImpl
 import com.example.muniseg.viewmodel.IncidenciasUiState
 import com.example.muniseg.viewmodel.IncidenciasViewModel
 import com.example.muniseg.viewmodel.DetalleIncidenciaState
+import androidx.compose.foundation.lazy.LazyRow
+import com.example.muniseg.viewmodel.CatalogosUiState
+
+
+
+
 
 @Composable
 fun IncidenciasApiScreen(onVolverClick: () -> Unit) {
@@ -30,6 +36,22 @@ fun IncidenciasApiScreen(onVolverClick: () -> Unit) {
     val detalleEstado by viewModel.detalleEstado.collectAsState()
 
     var mostrarDetalle by remember { mutableStateOf(false) }
+
+    val catalogosEstado by viewModel.catalogosEstado.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.cargarCatalogos()
+    }
+
+    val catalogos = catalogosEstado as? CatalogosUiState.Exito
+
+    val estados = listOf("Todos") +
+            (catalogos?.estados ?: emptyList())
+
+    var estadoSeleccionado by remember {
+        mutableStateOf("Todos")
+    }
+
 
     Column(
         modifier = Modifier
@@ -55,6 +77,27 @@ fun IncidenciasApiScreen(onVolverClick: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+
+
+        Text(
+            text = "Filtrar por estado",
+            style = MaterialTheme.typography.titleMedium
+        )
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(estados) { opcion ->
+                FilterChip(
+                    selected = estadoSeleccionado == opcion,
+                    onClick = { estadoSeleccionado = opcion },
+                    label = { Text(opcion) }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
         when (val resultado = estado) {
 
             IncidenciasUiState.Cargando -> {
@@ -65,13 +108,21 @@ fun IncidenciasApiScreen(onVolverClick: () -> Unit) {
                 Text("Error al consultar la API de Xano")
             }
 
+
             is IncidenciasUiState.Exito -> {
 
-                if (resultado.incidencias.isEmpty()) {
+                val incidenciasFiltradas =
+                    resultado.incidencias.filter {
+                        estadoSeleccionado == "Todos" ||
+                                it.estado == estadoSeleccionado
+                    }
+
+                if (incidenciasFiltradas.isEmpty()) {
+
                     Text("No hay incidencias registradas")
                 } else {
                     LazyColumn {
-                        items(resultado.incidencias) { incidencia ->
+                        items(incidenciasFiltradas) { incidencia ->
 
                             Card(
                                 modifier = Modifier

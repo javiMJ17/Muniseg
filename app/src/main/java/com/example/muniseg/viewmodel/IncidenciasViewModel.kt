@@ -1,4 +1,3 @@
-
 package com.example.muniseg.viewmodel
 
 import androidx.lifecycle.ViewModel
@@ -19,7 +18,7 @@ sealed interface IncidenciasUiState {
     data object Error : IncidenciasUiState
 }
 
-// Estados del registro de incidencias
+// Estados del registro
 sealed interface RegistroIncidenciaState {
     data object Inicial : RegistroIncidenciaState
     data object Guardando : RegistroIncidenciaState
@@ -27,12 +26,26 @@ sealed interface RegistroIncidenciaState {
     data object Error : RegistroIncidenciaState
 }
 
-// Estados del detalle de una incidencia
+// Estados del detalle
 sealed interface DetalleIncidenciaState {
     data object Inicial : DetalleIncidenciaState
     data object Cargando : DetalleIncidenciaState
     data class Exito(val incidencia: IncidenciaApi) : DetalleIncidenciaState
     data object Error : DetalleIncidenciaState
+}
+
+// Estados de los catalogos de Xano
+sealed interface CatalogosUiState {
+    data object Inicial : CatalogosUiState
+    data object Cargando : CatalogosUiState
+
+    data class Exito(
+        val categorias: List<String>,
+        val prioridades: List<String>,
+        val estados: List<String>
+    ) : CatalogosUiState
+
+    data object Error : CatalogosUiState
 }
 
 class IncidenciasViewModel(
@@ -54,12 +67,23 @@ class IncidenciasViewModel(
 
     val detalleEstado = _detalleEstado.asStateFlow()
 
+    private val _catalogosEstado =
+        MutableStateFlow<CatalogosUiState>(CatalogosUiState.Inicial)
+
+    val catalogosEstado = _catalogosEstado.asStateFlow()
+
+    private val _alertasEstado =
+        MutableStateFlow<IncidenciasUiState>(IncidenciasUiState.Cargando)
+
+    val alertasEstado = _alertasEstado.asStateFlow()
+
     init {
         cargarIncidencias()
     }
 
-    // Obtener todas las incidencias desde Xano
+    // Endpoint 1: consultar todas las incidencias
     fun cargarIncidencias() {
+
         _estado.value = IncidenciasUiState.Cargando
 
         viewModelScope.launch {
@@ -74,7 +98,7 @@ class IncidenciasViewModel(
         }
     }
 
-    // Registrar una incidencia en Xano
+    // Endpoint 2: registrar una incidencia
     fun registrarIncidencia(incidencia: NuevaIncidenciaApi) {
 
         if (_registroEstado.value == RegistroIncidenciaState.Guardando) return
@@ -93,7 +117,7 @@ class IncidenciasViewModel(
         }
     }
 
-    // Consultar una incidencia especifica desde Xano
+    // Endpoint 3: consultar incidencia por ID
     fun obtenerIncidenciaPorId(id: Int) {
 
         if (_detalleEstado.value == DetalleIncidenciaState.Cargando) return
@@ -112,7 +136,50 @@ class IncidenciasViewModel(
         }
     }
 
-    // Permite crear el ViewModel con nuestro repositorio
+    // Endpoints 4, 5 y 6: obtener catalogos
+    fun cargarCatalogos() {
+
+        if (_catalogosEstado.value == CatalogosUiState.Cargando) return
+
+        _catalogosEstado.value = CatalogosUiState.Cargando
+
+        viewModelScope.launch {
+            try {
+                val categorias = repository.obtenerCategorias()
+                val prioridades = repository.obtenerPrioridades()
+                val estados = repository.obtenerEstados()
+
+                _catalogosEstado.value = CatalogosUiState.Exito(
+                    categorias = categorias,
+                    prioridades = prioridades,
+                    estados = estados
+                )
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _catalogosEstado.value = CatalogosUiState.Error
+            }
+        }
+    }
+
+    // Endpoint 7: consultar alertas activas
+    fun cargarAlertas() {
+
+        _alertasEstado.value = IncidenciasUiState.Cargando
+
+        viewModelScope.launch {
+            try {
+                val alertas = repository.obtenerAlertas()
+                _alertasEstado.value = IncidenciasUiState.Exito(alertas)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _alertasEstado.value = IncidenciasUiState.Error
+            }
+        }
+    }
+
+    // Creacion del ViewModel con el repositorio
     class Factory(
         private val repository: IncidenciasRepository
     ) : ViewModelProvider.Factory {

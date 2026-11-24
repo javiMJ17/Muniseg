@@ -233,11 +233,7 @@ fun AppNavigation() {
 
         composable(Pantalla.Alertas.ruta) {
             AlertasScreen(
-                onCasoClick = { idCaso ->
-                    navController.navigate(
-                        Pantalla.DetalleCaso.crearRuta(idCaso)
-                    )
-                },
+
                 onInicioClick = {
                     navController.navigate(Pantalla.Home.ruta) {
                         launchSingleTop = true

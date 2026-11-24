@@ -44,6 +44,7 @@ import com.example.muniseg.remote.RetrofitClient
 import com.example.muniseg.repository.IncidenciasRepositoryImpl
 import com.example.muniseg.viewmodel.IncidenciasViewModel
 import com.example.muniseg.viewmodel.RegistroIncidenciaState
+import com.example.muniseg.viewmodel.CatalogosUiState
 
 
 
@@ -67,15 +68,48 @@ fun ReportCase(onBackClick: () -> Unit, onSubmitClick: () -> Unit) {
     var descripcion by remember { mutableStateOf("") }
     var ubicacion by remember { mutableStateOf("") }
 
-    //Categoria
-    var expandedCategoria by remember { mutableStateOf(false) }
-    val categorias = listOf("Seguridad", "Aseo y Ornato", "Tránsito", "Otro")
-    var selectedCategory by remember { mutableStateOf(categorias[0]) }
 
-    //Prioridad
+    // Obtener los catalogos desde Xano
+    val catalogosEstado by viewModel.catalogosEstado.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.cargarCatalogos()
+    }
+
+    val catalogos = catalogosEstado as? CatalogosUiState.Exito
+
+    // Categoria
+    var expandedCategoria by remember { mutableStateOf(false) }
+
+    val categorias = catalogos?.categorias
+        ?.takeIf { it.isNotEmpty() }
+        ?: listOf("Seguridad", "Aseo y Ornato", "Tránsito", "Otro")
+
+    var selectedCategory by remember {
+        mutableStateOf("Seguridad")
+    }
+
+    // Prioridad
     var expandedPrioridad by remember { mutableStateOf(false) }
-    val prioridades = listOf("Baja", "Media", "Alta")
-    var selectedPriority by remember { mutableStateOf(prioridades[1]) }
+
+    val prioridades = catalogos?.prioridades
+        ?.takeIf { it.isNotEmpty() }
+        ?: listOf("Baja", "Media", "Alta")
+
+    var selectedPriority by remember {
+        mutableStateOf("Media")
+    }
+
+    LaunchedEffect(categorias, prioridades) {
+        if (selectedCategory !in categorias) {
+            selectedCategory = categorias.first()
+        }
+
+        if (selectedPriority !in prioridades) {
+            selectedPriority = prioridades.first()
+        }
+    }
+
 
     //Permiso camara
     var hasCameraPermission by remember {
@@ -176,6 +210,34 @@ fun ReportCase(onBackClick: () -> Unit, onSubmitClick: () -> Unit) {
         ) {
 
 // Selector categoría
+
+            when (catalogosEstado) {
+                CatalogosUiState.Inicial,
+                CatalogosUiState.Cargando -> {
+                    Text("Cargando opciones...")
+                }
+
+                is CatalogosUiState.Exito -> {
+                    Text(
+                        text = "Opciones actualizadas desde Xano",
+                        color = Color(0xFF2E7D32),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                CatalogosUiState.Error -> {
+                    Text("Utilizando opciones locales")
+
+                    TextButton(
+                        onClick = { viewModel.cargarCatalogos() }
+                    ) {
+                        Text("Reintentar conexión")
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
 
             ExposedDropdownMenuBox(
                 expanded = expandedCategoria,

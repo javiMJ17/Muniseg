@@ -1,3 +1,4 @@
+
 package com.example.muniseg.ui.incidencias
 
 import androidx.compose.foundation.layout.*
@@ -12,6 +13,7 @@ import com.example.muniseg.remote.RetrofitClient
 import com.example.muniseg.repository.IncidenciasRepositoryImpl
 import com.example.muniseg.viewmodel.IncidenciasUiState
 import com.example.muniseg.viewmodel.IncidenciasViewModel
+import com.example.muniseg.viewmodel.DetalleIncidenciaState
 
 @Composable
 fun IncidenciasApiScreen(onVolverClick: () -> Unit) {
@@ -25,15 +27,19 @@ fun IncidenciasApiScreen(onVolverClick: () -> Unit) {
     )
 
     val estado by viewModel.estado.collectAsState()
+    val detalleEstado by viewModel.detalleEstado.collectAsState()
+
+    var mostrarDetalle by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .statusBarsPadding()
             .padding(16.dp)
     ) {
 
         Text(
-            text = "Incidencias desde Xano",
+            text = "Incidencias en línea",
             style = MaterialTheme.typography.titleLarge
         )
 
@@ -60,26 +66,43 @@ fun IncidenciasApiScreen(onVolverClick: () -> Unit) {
             }
 
             is IncidenciasUiState.Exito -> {
+
                 if (resultado.incidencias.isEmpty()) {
                     Text("No hay incidencias registradas")
                 } else {
                     LazyColumn {
                         items(resultado.incidencias) { incidencia ->
+
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(bottom = 8.dp)
                             ) {
-                                Column(modifier = Modifier.padding(16.dp)) {
+                                Column(
+                                    modifier = Modifier.padding(16.dp)
+                                ) {
+
                                     Text(
                                         text = incidencia.titulo,
                                         style = MaterialTheme.typography.titleMedium
                                     )
-                                    Text("Descripcion: ${incidencia.descripcion}")
-                                    Text("Categoria: ${incidencia.categoria}")
-                                    Text("Ubicacion: ${incidencia.ubicacion}")
+
+                                    Text("Categoría: ${incidencia.categoria}")
                                     Text("Estado: ${incidencia.estado}")
                                     Text("Prioridad: ${incidencia.prioridad}")
+
+                                    Spacer(modifier = Modifier.height(8.dp))
+
+                                    OutlinedButton(
+                                        onClick = {
+                                            viewModel.obtenerIncidenciaPorId(incidencia.id)
+                                            mostrarDetalle = true
+                                        },
+                                        enabled = detalleEstado !=
+                                                DetalleIncidenciaState.Cargando
+                                    ) {
+                                        Text("Ver detalle")
+                                    }
                                 }
                             }
                         }
@@ -87,5 +110,56 @@ fun IncidenciasApiScreen(onVolverClick: () -> Unit) {
                 }
             }
         }
+    }
+
+    // Mostrar el detalle obtenido desde Xano
+    if (mostrarDetalle) {
+
+        AlertDialog(
+            onDismissRequest = {
+                mostrarDetalle = false
+            },
+            title = {
+                Text("Detalle de incidencia")
+            },
+            text = {
+                when (val detalle = detalleEstado) {
+
+                    DetalleIncidenciaState.Inicial -> {
+                        Text("Consultando incidencia...")
+                    }
+
+                    DetalleIncidenciaState.Cargando -> {
+                        CircularProgressIndicator()
+                    }
+
+                    DetalleIncidenciaState.Error -> {
+                        Text("No se pudo obtener la incidencia")
+                    }
+
+                    is DetalleIncidenciaState.Exito -> {
+
+                        val incidencia = detalle.incidencia
+
+                        Column {
+                            Text("ID: ${incidencia.id}")
+                            Text("Título: ${incidencia.titulo}")
+                            Text("Descripción: ${incidencia.descripcion}")
+                            Text("Categoría: ${incidencia.categoria}")
+                            Text("Ubicación: ${incidencia.ubicacion}")
+                            Text("Estado: ${incidencia.estado}")
+                            Text("Prioridad: ${incidencia.prioridad}")
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { mostrarDetalle = false }
+                ) {
+                    Text("Cerrar")
+                }
+            }
+        )
     }
 }

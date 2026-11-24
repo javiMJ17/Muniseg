@@ -27,6 +27,14 @@ sealed interface RegistroIncidenciaState {
     data object Error : RegistroIncidenciaState
 }
 
+// Estados del detalle de una incidencia
+sealed interface DetalleIncidenciaState {
+    data object Inicial : DetalleIncidenciaState
+    data object Cargando : DetalleIncidenciaState
+    data class Exito(val incidencia: IncidenciaApi) : DetalleIncidenciaState
+    data object Error : DetalleIncidenciaState
+}
+
 class IncidenciasViewModel(
     private val repository: IncidenciasRepository
 ) : ViewModel() {
@@ -41,11 +49,16 @@ class IncidenciasViewModel(
 
     val registroEstado = _registroEstado.asStateFlow()
 
+    private val _detalleEstado =
+        MutableStateFlow<DetalleIncidenciaState>(DetalleIncidenciaState.Inicial)
+
+    val detalleEstado = _detalleEstado.asStateFlow()
+
     init {
         cargarIncidencias()
     }
 
-    // Obtener las incidencias desde Xano
+    // Obtener todas las incidencias desde Xano
     fun cargarIncidencias() {
         _estado.value = IncidenciasUiState.Cargando
 
@@ -76,6 +89,25 @@ class IncidenciasViewModel(
                 throw e
             } catch (e: Exception) {
                 _registroEstado.value = RegistroIncidenciaState.Error
+            }
+        }
+    }
+
+    // Consultar una incidencia especifica desde Xano
+    fun obtenerIncidenciaPorId(id: Int) {
+
+        if (_detalleEstado.value == DetalleIncidenciaState.Cargando) return
+
+        _detalleEstado.value = DetalleIncidenciaState.Cargando
+
+        viewModelScope.launch {
+            try {
+                val incidencia = repository.obtenerIncidenciaPorId(id)
+                _detalleEstado.value = DetalleIncidenciaState.Exito(incidencia)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _detalleEstado.value = DetalleIncidenciaState.Error
             }
         }
     }

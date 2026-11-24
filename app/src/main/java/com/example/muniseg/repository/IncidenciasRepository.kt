@@ -1,10 +1,11 @@
+
 package com.example.muniseg.repository
 
 import com.example.muniseg.remote.IncidenciaApi
 import com.example.muniseg.remote.NuevaIncidenciaApi
 import com.example.muniseg.remote.MunisegApi
 
-// Operaciones que utilizaremos para gestionar incidencias
+// Operaciones para gestionar incidencias
 interface IncidenciasRepository {
 
     suspend fun obtenerIncidencias(): List<IncidenciaApi>
@@ -12,9 +13,13 @@ interface IncidenciasRepository {
     suspend fun registrarIncidencia(
         incidencia: NuevaIncidenciaApi
     ): IncidenciaApi
+
+    suspend fun obtenerIncidenciaPorId(
+        id: Int
+    ): IncidenciaApi
 }
 
-// Conexion del repositorio con nuestra API de Xano
+// Conexion del repositorio con la API de Xano
 class IncidenciasRepositoryImpl(
     private val api: MunisegApi
 ) : IncidenciasRepository {
@@ -27,5 +32,11 @@ class IncidenciasRepositoryImpl(
         incidencia: NuevaIncidenciaApi
     ): IncidenciaApi {
         return api.registrarIncidencia(incidencia)
+    }
+
+    override suspend fun obtenerIncidenciaPorId(
+        id: Int
+    ): IncidenciaApi {
+        return api.obtenerIncidenciaPorId(id)
     }
 }

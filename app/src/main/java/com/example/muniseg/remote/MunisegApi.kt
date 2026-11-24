@@ -4,6 +4,12 @@ package com.example.muniseg.remote
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
+
+
+
+
+
 
 // Datos de una incidencia obtenida desde Xano
 data class IncidenciaApi(
@@ -39,4 +45,14 @@ interface MunisegApi {
     suspend fun registrarIncidencia(
         @Body incidencia: NuevaIncidenciaApi
     ): IncidenciaApi
+
+    // GET: consultar una incidencia por su ID
+    @GET("incidencias/{incidencias_id}")
+    suspend fun obtenerIncidenciaPorId(
+        @Path("incidencias_id") id: Int
+    ): IncidenciaApi
+
+
+
+
 }

@@ -21,6 +21,7 @@ import com.example.muniseg.data.SessionManager
 import com.example.muniseg.repository.MunisegRepository
 import com.example.muniseg.ui.alertas.AlertasScreen
 import com.example.muniseg.ui.notificaciones.NotificacionesScreen
+import com.example.muniseg.ui.incidencias.IncidenciasApiScreen
 
 
 sealed class Pantalla(val ruta: String) {
@@ -45,6 +46,9 @@ sealed class Pantalla(val ruta: String) {
     object Alertas : Pantalla("alertas_screen")
 
     object Notificaciones : Pantalla("notificaciones_screen")
+
+
+    object IncidenciasApi : Pantalla("incidencias_api_screen")
 
 
     object  DetalleCaso: Pantalla("detalle_caso_screen/{casoId}"){
@@ -127,10 +131,15 @@ fun AppNavigation() {
             )
         }
 
+
         composable(Pantalla.Menu.ruta) {
             MenuScreen(
-                onProfileClick = { navController.navigate(Pantalla.Perfil.ruta) },
-                onCasesClick = { navController.navigate(Pantalla.MisCasos.ruta) },
+                onProfileClick = {
+                    navController.navigate(Pantalla.Perfil.ruta)
+                },
+                onCasesClick = {
+                    navController.navigate(Pantalla.MisCasos.ruta)
+                },
                 onLogoutClick = cerrarSesion,
                 onReportClick = {
                     navController.navigate(Pantalla.NuevoCaso.ruta)
@@ -149,9 +158,14 @@ fun AppNavigation() {
                     navController.navigate(Pantalla.Notificaciones.ruta) {
                         launchSingleTop = true
                     }
+                },
+                onIncidenciasApiClick = {
+                    navController.navigate(Pantalla.IncidenciasApi.ruta)
                 }
             )
         }
+
+
         composable(Pantalla.NuevoCaso.ruta) {
             ReportCase(
                 onBackClick = { navController.popBackStack() },
@@ -264,6 +278,16 @@ fun AppNavigation() {
                 }
             )
         }
+
+        // Pantalla para consultar incidencias desde Xano
+        composable(Pantalla.IncidenciasApi.ruta) {
+            IncidenciasApiScreen(
+                onVolverClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
     }
 
 }

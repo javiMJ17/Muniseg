@@ -17,6 +17,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.muniseg.ui.navigation.AppBottomBar
 import com.example.muniseg.ui.navigation.Pantalla
+import androidx.compose.material.icons.filled.Cloud
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,7 +31,9 @@ fun MenuScreen(
     onReportClick: () -> Unit,
     onAlertasClick: () -> Unit,
     onNotificacionesClick: () -> Unit,
-) {
+    onIncidenciasApiClick: () -> Unit = {},
+
+    ) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -81,6 +86,17 @@ fun MenuScreen(
                 )
 
                 HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
+
+                // 3. Incidencias desde nuestra API de Xano
+                MenuItemRow(
+                    icon = Icons.Default.Cloud,
+                    title = "Incidencias en línea",
+                    subtitle = "Consulta los reportes guardados en Xano",
+                    onClick = onIncidenciasApiClick
+                )
+
+                HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
+
             }
 
             // Opción de Cerrar Sesión en la parte inferior
